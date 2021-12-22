@@ -1,0 +1,41 @@
+{% extends "blog/base.html" %}
+{% block content %}
+{% for post in posts %}
+<div class="container border border-3 rounded-3 mt-3 py-1 row ">
+  <div class="col-3">
+    <img class="rounded-circle my-2 " style="height: 100px; width: 100px;" src="{{ post.author.profile.image.url }}">
+  </div>
+  <div class="card-body col-4">
+    <a href="{% url 'post-detail' post.id %}" class="card-title text-primary fs-3">{{post.title}}</a>
+    <div>
+      <a href="{% url 'user-posts' post.author.username %}" class="card-subtitle mb-2 text-muted">By {{post.author}}</a>
+      <p class="card-subtitle mb-2 text-muted fs-6"> on {{post.date_posted|date:"F d, Y"}}</p>
+    </div>
+    <p class="card-text">{{post.content}}</p>
+  </div>
+</div>
+{% endfor %}
+
+{% if is_paginated %}
+
+  {% if page_obj.has_previous %}
+    <!-- <a class="btn btn-outline-secondary btn-sm m-1" href="?page=1">First</a> -->
+    <a class="btn btn-outline-secondary btn-sm my-1" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  {% endif %}
+
+  {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+      <a class="btn btn-primary btn-sm m-1" href="?page={{ num }}">{{ num }}</a>
+    {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+      <a class="btn btn-outline-secondary btn-sm m-1" href="?page={{ num }}">{{ num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a class="btn btn-outline-secondary btn-sm m-1" href="?page={{ page_obj.next_page_number }}">Next</a>
+    <!-- <a class="btn btn-outline-secondary btn-sm m-1" href="?page={{ page_obj.paginator.num_pages }}">Last</a> -->
+  {% endif %}
+
+{% endif %}
+
+{% endblock content %}
